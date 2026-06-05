@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Radio Gustos Musicales</title>
+<style>
+:root{--red:#e63946;--red2:#ff1f35;--gold:#ffd166;--cream:#fff8e7}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0;background:#000}
+.media{position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(1.025);transition:opacity 1.05s ease,transform 9s ease;filter:saturate(1.03) contrast(1.04) brightness(.98);background:#000}
+.media.cover{object-fit:cover}.media.contain{object-fit:contain}.media.show{opacity:1;transform:scale(1)}
+.blurBg{position:absolute;inset:-4%;width:108%;height:108%;object-fit:cover;opacity:0;filter:blur(24px) brightness(.34) saturate(1.15);transform:scale(1.08);transition:opacity .8s ease}.blurBg.show{opacity:1}
+.overlay{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,0,0,.02),rgba(0,0,0,.24)),linear-gradient(0deg,rgba(0,0,0,.48),rgba(0,0,0,.03) 58%,rgba(0,0,0,.22));pointer-events:none}
+.info{position:absolute;left:clamp(12px,3.5vw,52px);top:clamp(12px,3.5vh,38px);z-index:10;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:.55rem .85rem;backdrop-filter:blur(12px);max-width:calc(100vw - 24px)}
+.tag{color:var(--gold);font-weight:900;text-transform:uppercase;letter-spacing:.15em;font-size:clamp(.58rem,.95vw,.82rem)}
+.role{font-weight:800;letter-spacing:.045em;font-size:clamp(.62rem,1.08vw,.88rem);text-transform:uppercase;margin-top:.1rem}
+.main{position:absolute;left:clamp(18px,5vw,76px);right:clamp(18px,5vw,76px);bottom:clamp(36px,7.2vh,78px);z-index:8;text-shadow:0 12px 35px #000}
+h1{margin:0;text-transform:uppercase;font-size:clamp(2.75rem,7vw,6.4rem);line-height:.86;max-width:1050px}
+#smallText{margin-top:.65rem;display:inline-block;background:rgba(0,0,0,.34);padding:.42rem .68rem;border-left:4px solid var(--gold);border-radius:0 12px 12px 0;font-weight:900;font-size:clamp(.8rem,1.25vw,1.02rem);text-transform:uppercase}
+#start{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;background:#000}
+#start:before{content:"";position:absolute;inset:0;background:url('assets/PRESENTACION_01.jpeg') center/cover no-repeat;filter:brightness(.47);transform:scale(1.03);animation:slow 12s ease forwards}
+#start:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,0,0,.06),rgba(0,0,0,.70))}
+@keyframes slow{from{transform:scale(1.08)}to{transform:scale(1.02)}}
+.startBox{position:relative;z-index:2;max-width:950px}.startBox h2{margin:0;text-transform:uppercase;font-size:clamp(3.2rem,10vw,8rem);line-height:.84;text-shadow:0 10px 35px #000}.startBox p{font-size:clamp(1.05rem,2.2vw,1.55rem);text-shadow:0 6px 25px #000}
+button,.ytlink{border:0;border-radius:999px;background:var(--red);color:#fff;font-weight:900;font-size:1rem;padding:1rem 1.8rem;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 16px 50px rgba(230,57,70,.42)}button:hover,.ytlink:hover{transform:scale(1.04)}
+#bar{position:fixed;left:0;bottom:0;height:7px;width:0%;z-index:80;background:linear-gradient(90deg,var(--red),var(--gold))}
+#controls{position:fixed;top:1rem;right:1rem;z-index:80;display:flex;gap:.45rem}#controls button{padding:.48rem .68rem;font-size:.72rem;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.19);box-shadow:none}
+#youtubeBox{position:absolute;left:50%;bottom:clamp(80px,12vh,135px);transform:translateX(-50%);z-index:30;display:none;width:min(620px,calc(100vw - 28px));text-align:center;background:rgba(0,0,0,.80);border:2px solid rgba(255,31,53,.92);border-radius:30px;padding:1.35rem;backdrop-filter:blur(14px);box-shadow:0 0 80px rgba(255,31,53,.62)}
+#youtubeBox.show{display:block;animation:pulseBox 1.35s infinite alternate}@keyframes pulseBox{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.035)}}
+#youtubeBox h3{margin:0 0 .55rem;color:var(--gold);text-transform:uppercase;font-size:clamp(1rem,2vw,1.35rem)}#youtubeBox p{margin:.2rem 0 1rem;font-size:clamp(.9rem,1.6vw,1.1rem)}
+#youtubeBox .ytlink{font-size:clamp(1rem,2vw,1.22rem);padding:1.18rem 2.25rem;background:var(--red2);box-shadow:0 18px 75px rgba(255,31,53,.68)}
+#credits{position:absolute;left:clamp(16px,5vw,70px);right:clamp(16px,5vw,70px);bottom:clamp(82px,13vh,140px);z-index:20;display:none;background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:1.15rem;backdrop-filter:blur(12px);opacity:0;transition:opacity .8s ease}
+#credits.show{display:block;opacity:1}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem}.card{background:rgba(255,255,255,.07);border-radius:16px;padding:.82rem;text-align:center}.card b{color:var(--gold);display:block;text-transform:uppercase;font-size:.72rem;margin-bottom:.35rem}
+@media(max-width:760px){.info{left:.65rem;top:.65rem;right:.65rem;border-radius:18px}.main{left:1rem;right:1rem;bottom:4rem}h1{font-size:clamp(2.4rem,10.2vw,3.9rem)}#smallText{font-size:.76rem}#controls{top:.5rem;right:.5rem}#controls button{padding:.42rem .56rem;font-size:.66rem}.grid{grid-template-columns:1fr}#credits{bottom:5.1rem}}
+</style>
+</head>
+<body>
+<div id="stage">
+<img id="bgA" class="blurBg"><img id="bgB" class="blurBg">
+<img id="imgA" class="media"><img id="imgB" class="media"><video id="vidA" class="media" playsinline muted></video>
+<div class="overlay"></div>
+<div class="info"><div class="tag" id="tag"></div><div class="role" id="role"></div></div>
+<div class="main"><h1 id="title">Radio Gustos Musicales</h1><div id="smallText">La historia del rock y su evolución a través del tiempo</div></div>
+<div id="youtubeBox"><h3>Canción recomendada</h3><p>Smells Like Teen Spirit · Nirvana · 1991</p><a class="ytlink" href="https://www.youtube.com/watch?v=hTWKbfoikeg" target="_blank" rel="noopener">▶ VER VIDEO OFICIAL</a></div>
+<div id="credits"><div class="grid"><div class="card"><b>Presentadora</b>Sara Gueye Suárez</div><div class="card"><b>Historia</b>Víctor Prietos Ingresa</div><div class="card"><b>Locutora</b>Marina Marcos Rus</div><div class="card"><b>Evolución</b>Nerea Caurín Cornielle</div><div class="card"><b>Técnica musical</b>Mara Romero Torres</div></div></div>
+</div>
+<div id="start"><div class="startBox"><h2>Radio Gustos Musicales</h2><p>La historia del rock y su evolución a través del tiempo</p><button id="startBtn">▶ COMENZAR</button></div></div>
+<div id="controls"><button id="pauseBtn">⏸ Pausa</button><button id="restartBtn">↺ Reiniciar</button></div><div id="bar"></div>
+<audio id="bg" src="assets/MUSICA_FONDO.mp3" loop></audio><audio id="voice"></audio>
+<script>
+const scenes=[{"id": "presentacion", "title": "Radio Gustos Musicales", "tag": "Presentación", "role": "Sara Gueye Suárez · Presentadora", "voice": "SARA_INTRO.mp3", "duration": 10, "music": 0.14, "media": [{"start": 0, "type": "image", "src": "PRESENTACION_01.jpeg", "fit": "cover", "label": "RADIO GUSTOS MUSICALES"}, {"start": 5, "type": "image", "src": "PRESENTACION_02.jpeg", "fit": "cover", "label": "PRESENTACIÓN"}]}, {"id": "victor", "title": "Historia del rock", "tag": "Años 50 · Elvis · Beatles", "role": "Víctor Prietos Ingresa · Historia", "voice": "VICTOR_NEW.mp3", "duration": 32, "music": 0.1, "media": [{"start": 0, "type": "image", "src": "VICTOR_50S_01.jpeg", "fit": "cover", "label": "AÑOS 50 · ROCK AND ROLL"}, {"start": 5, "type": "image", "src": "VICTOR_50S_02.jpeg", "fit": "cover", "label": "NACIMIENTO DEL ROCK"}, {"start": 10, "type": "image", "src": "VICTOR_ELVIS_01.jpeg", "fit": "cover", "label": "ELVIS PRESLEY"}, {"start": 15, "type": "image", "src": "VICTOR_ELVIS_02.jpeg", "fit": "cover", "label": "ELVIS PRESLEY"}, {"start": 20, "type": "image", "src": "VICTOR_ELVIS_03.jpeg", "fit": "cover", "label": "ELVIS PRESLEY"}, {"start": 25, "type": "image", "src": "VICTOR_BEATLES_01.jpeg", "fit": "cover", "label": "THE BEATLES"}, {"start": 29, "type": "image", "src": "VICTOR_BEATLES_02.jpeg", "fit": "cover", "label": "BEATLES · AÑOS 60"}]}, {"id": "marina", "title": "Impacto cultural", "tag": "Guitarra eléctrica · Influencia", "role": "Marina Marcos Rus · Locutora", "voice": "MARINA_NEW.mp3", "duration": 43, "music": 0.1, "media": [{"start": 0, "type": "image", "src": "MARINA_IMPACTO_01.jpeg", "fit": "cover", "label": "IMPACTO CULTURAL"}, {"start": 8, "type": "image", "src": "MARINA_GUITARRA_01.jpeg", "fit": "cover", "label": "GUITARRA ELÉCTRICA"}, {"start": 16, "type": "image", "src": "MARINA_ENERGIA_01.jpeg", "fit": "cover", "label": "ENERGÍA DEL ROCK"}, {"start": 24, "type": "video", "src": "MARINA_VIDEO_01.mp4", "fit": "cover", "label": "INFLUENCIA"}, {"start": 32, "type": "image", "src": "MARINA_INFLUENCIA_01.jpeg", "fit": "cover", "label": "INFLUENCIA GLOBAL"}, {"start": 38, "type": "video", "src": "MARINA_VIDEO_02.mp4", "fit": "cover", "label": "CULTURA ROCK"}]}, {"id": "nerea", "title": "Evolución del rock", "tag": "Punk · Heavy Metal · Alternativo", "role": "Nerea Caurín Cornielle · Evolución", "voice": "NEREA_NEW.mp3", "duration": 34, "music": 0.1, "media": [{"start": 0, "type": "image", "src": "NEREA_EVOLUCION_01.jpeg", "fit": "contain", "label": "EVOLUCIÓN DEL ROCK"}, {"start": 7, "type": "image", "src": "NEREA_PUNK_01.jpeg", "fit": "cover", "label": "PUNK"}, {"start": 13, "type": "image", "src": "NEREA_PUNK_02.jpeg", "fit": "cover", "label": "PUNK ROCK"}, {"start": 18, "type": "video", "src": "NEREA_PUNK_VIDEO.mp4", "fit": "cover", "label": "ACTITUD PUNK"}, {"start": 23, "type": "image", "src": "NEREA_HEAVY_01.jpeg", "fit": "cover", "label": "HEAVY METAL"}, {"start": 28, "type": "image", "src": "NEREA_ALTERNATIVO_01.jpeg", "fit": "cover", "label": "ROCK ALTERNATIVO"}]}, {"id": "mara", "title": "Nirvana", "tag": "Smells Like Teen Spirit · 1991", "role": "Mara Romero Torres · Técnica musical", "voice": "MARA_NEW.mp3", "duration": 35, "music": 0.08, "media": [{"start": 0, "type": "image", "src": "MARA_NIRVANA_01.jpg", "fit": "cover", "label": "NIRVANA"}, {"start": 10, "type": "video", "src": "MARA_NIRVANA_VIDEO.mp4", "fit": "cover", "label": "SMELLS LIKE TEEN SPIRIT"}, {"start": 23, "type": "image", "src": "MARA_NIRVANA_02.jpg", "fit": "cover", "label": "NIRVANA · GRUNGE"}]}, {"id": "despedida", "title": "Despedida", "tag": "Cierre del programa", "role": "Sara Gueye Suárez · Presentadora", "voice": "SARA_DESPEDIDA_FINAL.mp3", "duration": 17, "music": 0.15, "media": [{"start": 0, "type": "image", "src": "SARA_DESPEDIDA_01.jpeg", "fit": "cover", "label": "CIERRE DEL PROGRAMA"}, {"start": 8, "type": "image", "src": "SARA_DESPEDIDA_02.jpeg", "fit": "cover", "label": "RADIO GUSTOS MUSICALES"}]}, {"id": "cartel_creditos", "title": "Créditos", "tag": "Trabajo de Música", "role": "Radio Gustos Musicales", "voice": null, "duration": 3.2, "music": 0.24, "creditsTitleOnly": true, "media": [{"start": 0, "type": "image", "src": "CREDITOS_01.jpeg", "fit": "cover", "label": "CRÉDITOS"}]}, {"id": "creditos", "title": "Créditos", "tag": "Equipo", "role": "Sara · Víctor · Marina · Nerea · Mara", "voice": null, "duration": 7.5, "music": 0.28, "credits": true, "media": [{"start": 0, "type": "image", "src": "CREDITOS_01.jpeg", "fit": "cover", "label": "CRÉDITOS"}, {"start": 4, "type": "image", "src": "CREDITOS_02.jpeg", "fit": "cover", "label": "GRACIAS POR ESCUCHAR"}]}, {"id": "final", "title": "Fin", "tag": "Canción recomendada", "role": "Smells Like Teen Spirit · Nirvana", "voice": null, "duration": 9999, "music": 0.18, "youtube": true, "media": [{"start": 0, "type": "image", "src": "MARA_NIRVANA_02.jpg", "fit": "cover", "label": "NIRVANA · 1991"}]}];
+const A=document.getElementById('imgA'),B=document.getElementById('imgB'),V=document.getElementById('vidA'),BGA=document.getElementById('bgA'),BGB=document.getElementById('bgB'),bg=document.getElementById('bg'),voice=document.getElementById('voice'),title=document.getElementById('title'),tag=document.getElementById('tag'),role=document.getElementById('role'),bar=document.getElementById('bar'),yt=document.getElementById('youtubeBox'),credits=document.getElementById('credits'),small=document.getElementById('smallText');
+let i=0,mediaTimer=null,sceneStart=0,dur=1,active=A,activeBg=BGA,paused=false,lastMediaIndex=-1,nextTimeout=null;
+function asset(p){return 'assets/'+p}
+function fade(a,target,ms=700){let s=a.volume,d=target-s,n=18,k=0;let x=setInterval(()=>{k++;a.volume=Math.max(0,Math.min(1,s+d*k/n));if(k>=n)clearInterval(x)},ms/n)}
+function currentMedia(s,elapsed){let index=0;for(let k=0;k<s.media.length;k++){if(elapsed>=s.media[k].start)index=k}return index}
+function display(item){
+ A.classList.remove('show');B.classList.remove('show');V.classList.remove('show');V.pause();
+ setTimeout(()=>{
+   if(item.type==='video'){
+     V.src=asset(item.src);V.load();V.currentTime=0;V.muted=true;V.volume=0;V.playsInline=true;V.loop=false;V.play().catch(()=>{});
+     V.className='media show '+(item.fit==='contain'?'contain':'cover');
+     BGA.classList.remove('show');BGB.classList.remove('show');
+   } else {
+     active=active===A?B:A; active.src=asset(item.src); active.className='media show '+(item.fit==='contain'?'contain':'cover');
+     activeBg=activeBg===BGA?BGB:BGA; activeBg.src=asset(item.src);
+     if(item.fit==='contain'){activeBg.classList.add('show')}else{BGA.classList.remove('show');BGB.classList.remove('show')}
+   }
+   small.textContent=item.label||tag.textContent;
+ },150)
+}
+function tickMedia(){
+ let s=scenes[i]; if(!s)return;
+ let elapsed=(Date.now()-sceneStart)/1000;
+ let idx=currentMedia(s,elapsed);
+ if(idx!==lastMediaIndex){lastMediaIndex=idx;display(s.media[idx])}
+}
+function setCredits(show){credits.classList.toggle('show',!!show)}
+function load(n){
+ clearInterval(mediaTimer); clearTimeout(nextTimeout); setCredits(false); yt.classList.remove('show');
+ i=n;lastMediaIndex=-1;let s=scenes[i];if(!s)return end();
+ title.textContent=s.title; tag.textContent=s.tag; role.textContent=s.role; small.textContent=s.tag;
+ fade(bg,s.music||.12); sceneStart=Date.now(); dur=s.duration||12;
+ if(s.youtube) yt.classList.add('show');
+ if(s.credits) setTimeout(()=>setCredits(true), 900); else setCredits(false);
+ tickMedia(); mediaTimer=setInterval(tickMedia,250);
+ if(s.voice){voice.src=asset(s.voice);voice.load();voice.volume=1;voice.onloadedmetadata=()=>{dur=Math.max(voice.duration||dur,8)};voice.onended=next;voice.play().catch(()=>{})}
+ else if(!s.youtube){nextTimeout=setTimeout(()=>{if(i===n&&!paused)next()},dur*1000)}
+}
+function next(){if(i<scenes.length-1)load(i+1);else end()}
+function end(){clearInterval(mediaTimer);setCredits(false);fade(bg,.18);yt.classList.add('show');title.textContent='Fin';tag.textContent='Canción recomendada';role.textContent='Smells Like Teen Spirit · Nirvana';small.textContent='Pulsa el botón rojo para ver el vídeo oficial';bar.style.width='100%'}
+function progress(){let p=(i/scenes.length)+Math.min((Date.now()-sceneStart)/1000/Math.max(dur,1),1)/scenes.length;bar.style.width=Math.min(p*100,100)+'%';requestAnimationFrame(progress)}
+document.getElementById('startBtn').onclick=async()=>{document.getElementById('start').style.display='none';bg.volume=0;await bg.play().catch(()=>{});fade(bg,.16,900);load(0);progress()};
+document.getElementById('pauseBtn').onclick=()=>{paused=!paused;if(paused){bg.pause();voice.pause();V.pause();clearTimeout(nextTimeout);document.getElementById('pauseBtn').textContent='▶ Continuar'}else{bg.play().catch(()=>{});voice.play().catch(()=>{});if(V.classList.contains('show'))V.play().catch(()=>{});document.getElementById('pauseBtn').textContent='⏸ Pausa'}};
+document.getElementById('restartBtn').onclick=()=>location.reload();
+</script>
+</body></html>

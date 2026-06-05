@@ -1,0 +1,14 @@
+RADIO GUSTOS MUSICALES · HTML FINAL STORYBOARD
+
+Versión reconstruida con el storyboard confirmado:
+- Presentación con las dos imágenes de Radio Gustos Musicales.
+- Víctor: años 50 → Elvis → Beatles.
+- Marina: impacto cultural → guitarra eléctrica → influencia.
+- Nerea: evolución → punk → heavy metal → alternativo.
+- Mara: Nirvana solo al final.
+- Sara: despedida al cierre.
+- Créditos justo después del cartel de créditos y solo durante unos segundos.
+- Botón rojo de Nirvana visible al final.
+- Un único index.html para Netlify.
+
+Para subir a Netlify: descomprime este ZIP y arrastra la carpeta que contiene index.html y assets/.

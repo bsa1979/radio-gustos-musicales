@@ -1,0 +1,2 @@
+VERSIÓN CORRECTA NETLIFY
+Sube esta carpeta completa a Netlify Drop. El documental está todo en index.html; no hay index_documental.html.
